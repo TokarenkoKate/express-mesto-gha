@@ -10,7 +10,6 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .populate('owner')
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -24,8 +23,14 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
-    .catch(() => res.status(404).send({ message: 'Карточка с указанным _id не найдена.' }));
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      } else {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+      }
+    })
+    .catch(() => res.status(400).send({ message: 'Некорректный _id пользователя.' }));
 };
 
 module.exports.likeCard = (req, res) => {
@@ -35,12 +40,16 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      } else {
+        res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка.' });
       }
@@ -54,12 +63,16 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card) {
+        res.send({ data: card });
+      } else {
+        res.status(404).send({ message: 'Карточка по указанному _id не найдена.' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные для снятии лайка.' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан несуществующий _id карточки.' });
+        res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка.' });
       }

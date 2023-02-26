@@ -25,6 +25,8 @@ app.use('/cards', require('./routes/cards'));
 
 app.use('/users', require('./routes/users'));
 
+app.use('*', require('./routes/invalidRoutes'));
+
 app.listen(PORT, () => {
   console.log('Ссылка на сервер');
   console.log(BASE_PATH);
