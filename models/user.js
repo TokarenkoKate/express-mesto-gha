@@ -3,19 +3,19 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    minLength: 2,
-    maxLength: 30,
+    required: [true, 'Имя пользователя должно быть заполнено.'],
+    minLength: [2, 'Имя пользователя должно содержать минимум 2 символа вместо {VALUE}.'],
+    maxLength: [30, 'Имя пользователя должно содержать максимум 30 символов вместо {VALUE}.'],
   },
   about: {
     type: String,
-    required: true,
-    minLength: 2,
-    maxLength: 30,
+    required: [true, 'Информация о пользователе должна быть заполнена.'],
+    minLength: [2, 'Информация о пользователе должна содержать минимум 2 символа вместо {VALUE}'],
+    maxLength: [30, 'Информация о пользователе должна содержать максимум 30 символов вместо {VALUE}'],
   },
   avatar: {
     type: String,
-    required: true,
+    required: [true, 'Ссылка на изображение должна быть заполнена.'],
   },
 });
 
