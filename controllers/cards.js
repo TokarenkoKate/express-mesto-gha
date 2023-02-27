@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден.' });
       }
     })
-    .catch(() => res.status(INCORRECT_DATA).send({ message: getValidationErrorMessages(err) }));
+    .catch((err) => res.status(INCORRECT_DATA).send({ message: getValidationErrorMessages(err) }));
 };
 
 module.exports.likeCard = (req, res) => {
